@@ -24,13 +24,13 @@ const controlSearch = async () => {
         const search = new Search(query);
 
         state.search = search;
-        
+  
+        searchView.clearSearchInput();
+        searchView.clearResult();
+
         await search.getResults();
 
         searchView.renderResults(search.result);
-        // clear the input provided
-        searchView.clearSearchInput();
-        
     }
 }
 
