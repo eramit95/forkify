@@ -1,5 +1,5 @@
 // Global app controller
-import { elements } from './views/base';
+import { elements, loader, removeLoader } from './views/base';
 import Search from './models/Search'
 import * as searchView from './views/searchView';
 
@@ -20,6 +20,8 @@ const controlSearch = async () => {
     const query = searchView.getSearchInput();
 
     if (query) {
+
+        loader(elements.results);
         // Updating search object
         const search = new Search(query);
 
@@ -29,6 +31,8 @@ const controlSearch = async () => {
         searchView.clearResult();
 
         await search.getResults();
+
+        removeLoader();
 
         searchView.renderResults(search.result);
     }
