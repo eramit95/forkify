@@ -8,6 +8,7 @@ export const clearSearchInput = () => {
 
 export const clearResult = () => {
     elements.searchResultList.innerHTML = '';
+    elements.pagination.innerHTML = '';
 }
 
 // If length is greater than ELLIPSIS_CHARS then show ellipsis 
@@ -56,6 +57,48 @@ const renderRecipe = recipe => {
     elements.searchResultList.insertAdjacentHTML('beforeend', markup);
 }
 
-export const renderResults = recipes => {
-    recipes.forEach(renderRecipe);
+const createButton = (pageNumber, type) => {
+    const goToPage = type === 'prev' ? pageNumber - 1 : pageNumber + 1;
+    return `
+        <button class="btn-inline results__btn--${type}" data-goto=${goToPage}>
+            <span>Page ${goToPage}</span>
+            <svg class="search__icon">
+                <use href="img/icons.svg#icon-triangle-${type === 'prev' ? 'left' : 'right'}"></use>
+            </svg>
+        </button>
+    `;
 }
+
+const renderButtons = (pageNumber, numberOfPages) => {
+
+    // Pagination is required if number of pages > 1
+    if (numberOfPages <= 1) {
+        return;
+    }
+
+    let button;
+
+    if (pageNumber === 1) {
+        button = createButton(pageNumber, 'next');
+    } else if (pageNumber == numberOfPages) {
+        button = createButton(pageNumber, 'prev');
+    } else {
+        button = `
+            ${createButton(pageNumber, 'prev')}
+            ${createButton(pageNumber, 'next')}
+        `
+    }
+
+    elements.pagination.insertAdjacentHTML('afterbegin', button);
+}
+
+export const renderResults = (recipes = [], page = 1, pageSize = 10) => {
+    clearResult();
+    const pageStart = (page - 1) * pageSize;
+    const pageEnd = (page) * pageSize;
+
+    const numberOfPages = Math.ceil(recipes.length / pageSize);
+    recipes.slice(pageStart, pageEnd).forEach(renderRecipe);
+    renderButtons(page, numberOfPages);
+}
+

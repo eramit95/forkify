@@ -42,3 +42,13 @@ elements.searchForm.addEventListener('submit', _event => {
     _event.preventDefault();
     controlSearch();
 });
+
+elements.pagination.addEventListener('click', _event => {
+    const button = _event.target.closest('.btn-inline');
+    if (!button) {
+        return;
+    }
+
+    const gotoPage = +button.dataset.goto;
+    searchView.renderResults(state.search.result, gotoPage);
+})
