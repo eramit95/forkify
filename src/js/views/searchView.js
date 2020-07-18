@@ -18,7 +18,6 @@ const ellipsisCreator = (token) => {
     }
     const tempArr = [];
     token.split(' ').reduce((acc, element) => {
-        debugger;
         if (acc + element.length <= ELLIPSIS_CHARS) {
             tempArr.push(element);
             return acc + element.length;
@@ -29,6 +28,17 @@ const ellipsisCreator = (token) => {
 
     return tempArr.join(' ');
 };
+
+export const highlightSelected = id => {
+    if (!document.querySelector(`a[href*="#${id}"]`)) {
+        return
+    };
+    const resultArr = Array.from(document.querySelectorAll('.results__link'));
+    resultArr.forEach(el => {
+        el.classList.remove('results__link--active');
+    });
+    document.querySelector(`a[href*="#${id}"]`).classList.add('results__link--active')
+}
 
 /**
 image_url: "http://forkify-api.herokuapp.com/images/best_pizza_dough_recipe1b20.jpg"

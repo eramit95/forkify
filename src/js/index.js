@@ -1,7 +1,11 @@
 // Global app controller
 import { elements, loader, removeLoader } from './views/base';
-import Search from './models/Search'
+
+import Search from './models/Search';
+import Recipe from './models/Recipe';
+
 import * as searchView from './views/searchView';
+import * as recipeView from './views/recipeView';
 
 /** Global state of the app
  * - Search object
@@ -17,7 +21,7 @@ const state = {
  * SEARCH CONTROLLER
  */
 const controlSearch = async () => {
-    const query = searchView.getSearchInput();
+    const query = searchView.getSearchInput() || 'pizza';
 
     if (query) {
 
@@ -52,3 +56,51 @@ elements.pagination.addEventListener('click', _event => {
     const gotoPage = +button.dataset.goto;
     searchView.renderResults(state.search.result, gotoPage);
 })
+
+/**
+ * Recipe Controller
+ */
+ const controlRecipe = async () => {
+    const id = window.location.hash.replace('#', '');
+    
+    if (!id) {
+        return;
+    }
+
+    searchView.highlightSelected(id);
+
+    recipeView.clearResult();
+    loader(elements.recipe);
+
+    const recipe = new Recipe(id);
+    state.recipe = recipe;
+
+    await recipe.getRecipe();
+    
+    recipe.parseIngredients();
+
+    state.recipe.calcTime();
+    state.recipe.calcServings();
+
+    removeLoader();
+    recipeView.renderRecipe(state.recipe);
+ }
+
+ ['hashchange', 'load'].forEach(event => window.addEventListener(event, controlRecipe));
+
+ // Handling recipe button clicks
+ elements.recipe.addEventListener('click', element => {
+     if (element.target.matches('.btn-decrease, .btn-decrease *')) {
+         if (state.recipe.servings < 1) {
+             return;
+         }
+        state.recipe.updateServings('dec');
+        recipeView.updateServingsIngredients(state.recipe);
+     } else if(element.target.matches('.btn-increase, .btn-increase *')) {
+        state.recipe.updateServings('inc');
+        recipeView.updateServingsIngredients(state.recipe);
+     }
+ })
+
+
+
