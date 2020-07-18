@@ -12,7 +12,7 @@ export const clearResult = () => {
 }
 
 // If length is greater than ELLIPSIS_CHARS then show ellipsis 
-const ellipsisCreator = (token) => {
+export const ellipsisCreator = (token) => {
     if (token.length <= ELLIPSIS_CHARS) {
         return token;
     }
@@ -30,14 +30,14 @@ const ellipsisCreator = (token) => {
 };
 
 export const highlightSelected = id => {
-    if (!document.querySelector(`a[href*="#${id}"]`)) {
+    if (!document.querySelector(`.results__link[href*="#${id}"]`)) {
         return
     };
     const resultArr = Array.from(document.querySelectorAll('.results__link'));
     resultArr.forEach(el => {
         el.classList.remove('results__link--active');
     });
-    document.querySelector(`a[href*="#${id}"]`).classList.add('results__link--active')
+    document.querySelector(`.results__link[href*="#${id}"]`).classList.add('results__link--active')
 }
 
 /**
